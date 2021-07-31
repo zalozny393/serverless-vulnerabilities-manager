@@ -1,0 +1,17 @@
+{
+  "name": "vulnerability-manager",
+  "version": "1.0.0",
+  "description": "* Get all groups for by username; * Get all assets by a list of groups; * Get all vulnerabilities by a list of assets * Filter vulnerabilities by status or/and complexity",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "serverless": "^2.51.2"
+  },
+  "devDependencies": {
+    "serverless-offline": "^7.0.0"
+  }
+}
