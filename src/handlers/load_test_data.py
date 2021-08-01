@@ -43,6 +43,13 @@ def load_test_data(event, _):
                 name=name,
                 group=group.group_name
             ))
+    # add admin user
+    for group in groups:
+        users.append(User(
+                username='admin@test.com',
+                name='Admin',
+                group=group.group_name
+        ))
 
     asset_vulnerabilities = []
     ips = [fake.ipv4() for _ in range(20)]
