@@ -4,7 +4,7 @@ from src.models.group import Group
 class User(Group):
     SELECTOR = 'USER'
 
-    def __init__(self, username: str, group: str = None, name: str = ''):
+    def __init__(self, username: str, group: str, name: str = ''):
         super().__init__(group)
         self.username = username
         self.name = name

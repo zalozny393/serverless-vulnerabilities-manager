@@ -47,9 +47,9 @@ resources:
             AttributeType: "S"
           - AttributeName: "SK"
             AttributeType: "S"
-          - AttributeName: "Complexity"
+          - AttributeName: "severity"
             AttributeType: "N"
-          - AttributeName: "Status"
+          - AttributeName: "status"
             AttributeType: "N"
         KeySchema: 
           - AttributeName: "PK"
@@ -64,7 +64,7 @@ resources:
             KeySchema:
             - AttributeName: PK
               KeyType: HASH
-            - AttributeName: Complexity
+            - AttributeName: severity
               KeyType: RANGE
             Projection:
               ProjectionType: ALL
@@ -72,7 +72,7 @@ resources:
             KeySchema:
             - AttributeName: PK
               KeyType: HASH
-            - AttributeName: Status
+            - AttributeName: status
               KeyType: RANGE
             Projection:
               ProjectionType: ALL
