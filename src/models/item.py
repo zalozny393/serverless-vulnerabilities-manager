@@ -1,6 +1,6 @@
-import json
 from abc import ABC, abstractmethod
-from typing import Iterable
+
+from src.services.database_service import PRIMARY_KEY, SORT_KEY
 
 
 class Item(ABC):
@@ -9,19 +9,13 @@ class Item(ABC):
 
     @staticmethod
     @abstractmethod
-    def to_item(item: any):
+    def to_item(item: 'Item'):
         pass
 
-    @classmethod
-    def load_from_json(cls, json_data: str) -> Iterable['Item']:
-        items = json.loads(json_data)
-        for item in items:
-            yield cls(**item)
-
-    @classmethod
-    def get_batch_keys(cls, items: Iterable['Item']) -> Iterable[any]:
-        for item in items:
-            yield cls.to_item(item)
+    @staticmethod
+    @abstractmethod
+    def from_item(item: dict):
+        pass
 
     @property
     @abstractmethod
@@ -35,6 +29,6 @@ class Item(ABC):
 
     def keys(self):
         return {
-            'PK': self.pk,
-            'SK': self.sk,
+            PRIMARY_KEY: self.pk,
+            SORT_KEY: self.sk,
         }

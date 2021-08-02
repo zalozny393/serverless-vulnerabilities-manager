@@ -1,4 +1,3 @@
-import os
 import random
 import uuid
 
@@ -7,14 +6,10 @@ from faker import Faker
 from src.models.asset_vulnerability import AssetVulnerability
 from src.models.group import Group
 from src.models.user import User
-from src.services.database import DatabaseService
+from src.services.database_service import DatabaseService
+from src.utils.debugger import init_debug_mode
 
-if os.getenv('STAGE') == 'dev' and os.getenv('DEBUG') == 'true':
-    print('Debug is on')
-    import pydevd_pycharm
-    pydevd_pycharm.settrace('localhost', port=8050, stdoutToServer=True, stderrToServer=True, suspend=False)
-else:
-    print('Debug is off')
+init_debug_mode()
 
 
 TEST_DATA_DIR = 'test_data/'
