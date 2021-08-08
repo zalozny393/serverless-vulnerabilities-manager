@@ -11,19 +11,19 @@ class Group(Item):
         self._name = name
 
     @staticmethod
-    def to_item(group: 'Group'):
+    def to_item(group: 'Group') -> dict:
         return {**group.keys(), **{
             'type': group.type
         }}
 
     @staticmethod
-    def from_item(item: dict):
+    def from_item(item: dict) -> 'Group':
         return Group(
             name=Group.get_group_name_from_pk(item[PRIMARY_KEY])
         )
 
     @staticmethod
-    def get_group_name_from_pk(pk: str):
+    def get_group_name_from_pk(pk: str) -> str:
         data = pk.split('#')
         if data[0] != Group.SELECTOR:
             raise ValueError('Wrong Primary Key')
@@ -39,5 +39,5 @@ class Group(Item):
         return self.pk
 
     @property
-    def group_name(self):
+    def group_name(self) -> str:
         return self._name

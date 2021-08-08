@@ -27,7 +27,7 @@ class Item(ABC):
     def sk(self):
         pass
 
-    def keys(self):
+    def keys(self) -> dict:
         return {
             PRIMARY_KEY: self.pk,
             SORT_KEY: self.sk,

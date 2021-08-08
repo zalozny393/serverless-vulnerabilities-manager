@@ -14,10 +14,10 @@ class DatabaseService:
     def __init__(self):
         self.table = dynamodb.Table(os.environ.get('TABLE_NAME'))
 
-    def create(self, item: any):
+    def create(self, item: any) -> None:
         self.table.put_item(Item=item)
 
-    def batch_create(self, items: Iterable[any]):
+    def batch_create(self, items: Iterable[any]) -> None:
         counter = 0
         with self.table.batch_writer() as batch:
             for item in items:
@@ -32,7 +32,7 @@ class DatabaseService:
               sk: str = SORT_KEY,
               sk_value: str = None,
               index_name: str = None
-              ):
+              ) -> Iterable:
         expression = Key(pk).eq(pk_value) & Key(sk).eq(sk_value) if sk_value else Key(pk).eq(pk_value)
 
         kwargs = {}
