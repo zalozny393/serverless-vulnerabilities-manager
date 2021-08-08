@@ -26,6 +26,17 @@ class DatabaseService:
 
         print(f'{counter} records created')
 
+    def get_item(self, pk_value: str, sk_value: str = None, pk_key: str = PRIMARY_KEY, sk_key: str = SORT_KEY):
+        if not sk_value:
+            sk_value = pk_value
+        item = self.table.get_item(
+            Key={
+                pk_key: pk_value,
+                sk_key: sk_value
+            }
+        )
+        return item['Item']
+
     def query(self,
               pk_value: str,
               pk: str = PRIMARY_KEY,

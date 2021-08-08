@@ -1,5 +1,6 @@
 import random
 import uuid
+from typing import List
 
 from faker import Faker
 
@@ -11,11 +12,7 @@ from src.utils.debugger import init_debug_mode
 
 init_debug_mode()
 
-
-TEST_DATA_DIR = 'test_data/'
-GROUPS_FILE = f'{TEST_DATA_DIR}groups.json'
-USERS_FILE = f'{TEST_DATA_DIR}users.json'
-NUMBER_OF_GROUPS = 10
+NUMBER_OF_GROUPS = 5
 NUMBER_OF_USERS = 20
 NUMBER_OF_ASSET_VULNERABILITIES = 150
 
@@ -30,27 +27,24 @@ def load_test_data(event, _):
 
     users = []
     for _ in range(NUMBER_OF_USERS):
-        email = fake.email()
-        name = fake.name()
-        for group in random.sample(groups, random.randint(1, 5)):
-            users.append(User(
-                username=email,
-                name=name,
-                group=group.group_name
-            ))
-    # add admin user
-    for group in groups:
         users.append(User(
-                username='admin@test.com',
-                name='Admin',
-                group=group.group_name
+            username=fake.email(),
+            name=fake.name(),
+            groups=list(_get_group_names(random.sample(groups, random.randint(1, 3))))
         ))
+
+    # add admin user
+    users.append(User(
+            username='admin@test.com',
+            name='Admin',
+            groups=list(_get_group_names(groups))
+    ))
 
     asset_vulnerabilities = []
     ips = [fake.ipv4() for _ in range(20)]
     for _ in range(NUMBER_OF_ASSET_VULNERABILITIES):
         asset_vulnerabilities.append(AssetVulnerability(
-            group=random.choice(groups).group_name,
+            group=random.choice(groups).name,
             ip=random.choice(ips),
             severity=random.randint(0, 4),
             status=random.randint(0, 4),
@@ -67,3 +61,7 @@ def load_test_data(event, _):
 
     print(f'Loaded: groups - {len(groups)}, users - {len(users)}, asset vulnerabilities - {len(asset_vulnerabilities)}')
 
+
+def _get_group_names(groups: List[Group]):
+    for group in groups:
+        yield group.name

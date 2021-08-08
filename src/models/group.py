@@ -8,7 +8,7 @@ class Group(Item):
     def __init__(self, name: str):
         super().__init__()
         self.type = Group.SELECTOR.capitalize()
-        self._name = name
+        self.name = name
 
     @staticmethod
     def to_item(group: 'Group') -> dict:
@@ -32,12 +32,8 @@ class Group(Item):
 
     @property
     def pk(self) -> str:
-        return f'{Group.SELECTOR}#{self._name}'
+        return f'{Group.SELECTOR}#{self.name}'
 
     @property
     def sk(self) -> str:
         return self.pk
-
-    @property
-    def group_name(self) -> str:
-        return self._name

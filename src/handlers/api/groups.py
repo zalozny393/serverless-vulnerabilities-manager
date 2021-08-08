@@ -13,5 +13,4 @@ def get_groups(event, _):
 
     user_service = UserService()
     groups = user_service.get_user_groups(username=username)
-    group_names = map(lambda group: group.group_name, groups)
-    return response(list(group_names))
+    return response(groups)
