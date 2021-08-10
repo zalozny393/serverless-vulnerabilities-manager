@@ -39,9 +39,9 @@ class DatabaseService:
 
     def query(self,
               pk_value: str,
+              sk_value: str = None,
               pk: str = PRIMARY_KEY,
               sk: str = SORT_KEY,
-              sk_value: str = None,
               index_name: str = None
               ) -> Iterable:
         expression = Key(pk).eq(pk_value) & Key(sk).eq(sk_value) if sk_value else Key(pk).eq(pk_value)

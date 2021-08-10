@@ -57,6 +57,16 @@ functions:
             parameters:
               querystrings:
                 username: true
+  listAssetVulnerabilities:
+    handler: src/handlers/api/asset_vulnerabilities.get_asset_vulnerabilities
+    events:
+      - http:
+          path: /asset-vulnerabilities
+          method: get
+          request:
+            parameters:
+              querystrings:
+                username: true
   loadTestData:
     handler: src/handlers/load_test_data.load_test_data
 
@@ -83,7 +93,7 @@ resources:
             KeyType: "RANGE"
         ProvisionedThroughput:
           ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+          WriteCapacityUnits: 5
         LocalSecondaryIndexes:
           - IndexName: LSI1
             KeySchema:
@@ -111,5 +121,5 @@ resources:
             Projection:
               ProjectionType: KEYS_ONLY
             ProvisionedThroughput:
-              ReadCapacityUnits: 5
+              ReadCapacityUnits: 1
               WriteCapacityUnits: 5

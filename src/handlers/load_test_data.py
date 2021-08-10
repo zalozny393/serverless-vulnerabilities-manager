@@ -4,9 +4,9 @@ from typing import List
 
 from faker import Faker
 
-from src.models.asset_vulnerability import AssetVulnerability
-from src.models.group import Group
-from src.models.user import User
+from src.models.asset_vulnerability_model import AssetVulnerabilityModel
+from src.models.group_model import GroupModel
+from src.models.user_model import UserModel
 from src.services.database_service import DatabaseService
 from src.utils.debugger import init_debug_mode
 
@@ -23,18 +23,18 @@ def load_test_data(event, _):
     fake = Faker()
     groups = []
     for _ in range(NUMBER_OF_GROUPS):
-        groups.append(Group(fake.company()))
+        groups.append(GroupModel(fake.company()))
 
     users = []
     for _ in range(NUMBER_OF_USERS):
-        users.append(User(
+        users.append(UserModel(
             username=fake.email(),
             name=fake.name(),
             groups=list(_get_group_names(random.sample(groups, random.randint(1, 3))))
         ))
 
     # add admin user
-    users.append(User(
+    users.append(UserModel(
             username='admin@test.com',
             name='Admin',
             groups=list(_get_group_names(groups))
@@ -43,7 +43,7 @@ def load_test_data(event, _):
     asset_vulnerabilities = []
     ips = [fake.ipv4() for _ in range(20)]
     for _ in range(NUMBER_OF_ASSET_VULNERABILITIES):
-        asset_vulnerabilities.append(AssetVulnerability(
+        asset_vulnerabilities.append(AssetVulnerabilityModel(
             group=random.choice(groups).name,
             ip=random.choice(ips),
             severity=random.randint(0, 4),
@@ -54,14 +54,14 @@ def load_test_data(event, _):
         ))
 
     database_service.batch_create(
-        list(map(lambda group: Group.to_item(group), groups)) +
-        list(map(lambda user: User.to_item(user), users)) +
-        list(map(lambda av: AssetVulnerability.to_item(av), asset_vulnerabilities))
+        list(map(lambda group: GroupModel.to_item(group), groups)) +
+        list(map(lambda user: UserModel.to_item(user), users)) +
+        list(map(lambda av: AssetVulnerabilityModel.to_item(av), asset_vulnerabilities))
     )
 
     print(f'Loaded: groups - {len(groups)}, users - {len(users)}, asset vulnerabilities - {len(asset_vulnerabilities)}')
 
 
-def _get_group_names(groups: List[Group]):
+def _get_group_names(groups: List[GroupModel]):
     for group in groups:
         yield group.name
