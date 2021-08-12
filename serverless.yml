@@ -31,12 +31,6 @@ provider:
             - Fn::GetAtt:
               - VulnerabilityManagerTable
               - Arn
-            - Fn::Join:
-              - "/"
-              - - Fn::GetAtt:
-                  - VulnerabilityManagerTable
-                  - Arn
-                - "index/GSI1"
 
   environment:
     TABLE_NAME: ${self:custom.tableName}
@@ -72,7 +66,11 @@ functions:
                 asset: true
   loadTestData:
     handler: src/handlers/load_test_data.load_test_data
-
+  cronHandler:
+    runtime: nodejs12.x
+    handler: cronHandler.run
+    events:
+      - schedule: rate(1 day) # Cronjob format is also available. Example: cron(0/2 * ? * MON-FRI *)
 
 resources:
   Resources:
