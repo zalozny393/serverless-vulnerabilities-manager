@@ -61,12 +61,15 @@ functions:
     handler: src/handlers/api/asset_vulnerabilities.get_asset_vulnerabilities
     events:
       - http:
-          path: /asset-vulnerabilities
+          path: /asset-vulnerabilities/status-{status}
           method: get
           request:
             parameters:
+              paths:
+                status: true
               querystrings:
                 username: true
+                asset: true
   loadTestData:
     handler: src/handlers/load_test_data.load_test_data
 
@@ -94,32 +97,3 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 5
-        LocalSecondaryIndexes:
-          - IndexName: LSI1
-            KeySchema:
-            - AttributeName: PK
-              KeyType: HASH
-            - AttributeName: severity
-              KeyType: RANGE
-            Projection:
-              ProjectionType: ALL
-          - IndexName: LSI2
-            KeySchema:
-            - AttributeName: PK
-              KeyType: HASH
-            - AttributeName: status
-              KeyType: RANGE
-            Projection:
-              ProjectionType: ALL
-        GlobalSecondaryIndexes:
-          - IndexName: 'GSI1'
-            KeySchema:
-            - AttributeName: "SK"
-              KeyType: "HASH"
-            - AttributeName: "PK"
-              KeyType: "RANGE"
-            Projection:
-              ProjectionType: KEYS_ONLY
-            ProvisionedThroughput:
-              ReadCapacityUnits: 1
-              WriteCapacityUnits: 5

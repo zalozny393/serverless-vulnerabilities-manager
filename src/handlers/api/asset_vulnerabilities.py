@@ -10,13 +10,14 @@ init_debug_mode()
 @request
 def get_asset_vulnerabilities(user: UserModel, event):
     try:
+        status = int(event['pathParameters'].get('status'))
         group_name = event['queryStringParameters'].get('group')
-        status = event['queryStringParameters'].get('status', 0)
+        asset = event['queryStringParameters'].get('asset')
     except AttributeError:
         return response('group name or status is missing', status=400)
 
     asset_vulnerability_service = AssetVulnerabilityService()
-    asset_vulnerabilities = asset_vulnerability_service.get_asset_vulnerabilities_by_group(group_name, status)
+    asset_vulnerabilities = asset_vulnerability_service.get_asset_vulnerabilities(group_name, status, asset)
 
     return response(list(map(lambda av: {
             'name': av.name,

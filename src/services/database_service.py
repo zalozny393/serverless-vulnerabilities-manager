@@ -2,7 +2,7 @@ import os
 from typing import Iterable
 
 import boto3
-from boto3.dynamodb.conditions import Key
+from boto3.dynamodb.conditions import Key, Equals
 
 dynamodb = boto3.resource('dynamodb')
 PRIMARY_KEY = 'PK'
@@ -37,14 +37,7 @@ class DatabaseService:
         )
         return item['Item']
 
-    def query(self,
-              pk_value: str,
-              sk_value: str = None,
-              pk: str = PRIMARY_KEY,
-              sk: str = SORT_KEY,
-              index_name: str = None
-              ) -> Iterable:
-        expression = Key(pk).eq(pk_value) & Key(sk).eq(sk_value) if sk_value else Key(pk).eq(pk_value)
+    def query(self, expression: Equals, index_name: str = None) -> Iterable:
 
         kwargs = {}
         if index_name:
