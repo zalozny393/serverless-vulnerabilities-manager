@@ -12,6 +12,9 @@ class UserService:
         user = UserModel(username=username)
 
         user_data = self.database_service.get_item(pk_value=user.sk)
+        if not user_data:
+            return None
+
         return UserModel.from_item(user_data)
 
     def get_user_groups(self, username: str) -> Iterable:

@@ -27,9 +27,14 @@ provider:
             - "dynamodb:PutItem"
             - "dynamodb:Query"
             - "dynamodb:UpdateItem"
+            - "dynamodb:BatchWriteItem"
+            - "sqs:SendMessage"
           Resource:
             - Fn::GetAtt:
               - VulnerabilityManagerTable
+              - Arn
+            - Fn::GetAtt:
+              - MockDataQueue
               - Arn
 
   environment:
@@ -39,6 +44,7 @@ provider:
 
 plugins:
   - serverless-offline
+  - serverless-python-requirements
 
 functions:
   listGroups:
@@ -55,7 +61,7 @@ functions:
     handler: src/handlers/api/asset_vulnerabilities.get_asset_vulnerabilities
     events:
       - http:
-          path: /asset-vulnerabilities/status-{status}
+          path: /asset-vulnerabilities/{status}
           method: get
           request:
             parameters:
@@ -64,8 +70,21 @@ functions:
               querystrings:
                 username: true
                 asset: true
-  loadTestData:
-    handler: src/handlers/load_test_data.load_test_data
+  loadMetaData:
+    handler: src/handlers/load_test_data.load_meta_data
+    timeout: 300
+    environment:
+      QUEUE_URL: { Ref: MockDataQueue }
+  loadAssetVulnerabilities:
+    handler: src/handlers/load_test_data.load_asset_vulnerabilities
+    events:
+      - sqs:
+          batchSize: 1000
+          maximumBatchingWindow: 30
+          arn:
+            Fn::GetAtt:
+              - MockDataQueue
+              - Arn
   cronHandler:
     runtime: nodejs12.x
     handler: cronHandler.run
@@ -83,10 +102,6 @@ resources:
             AttributeType: "S"
           - AttributeName: "SK"
             AttributeType: "S"
-          - AttributeName: "severity"
-            AttributeType: "N"
-          - AttributeName: "status"
-            AttributeType: "N"
         KeySchema: 
           - AttributeName: "PK"
             KeyType: "HASH"
@@ -94,4 +109,8 @@ resources:
             KeyType: "RANGE"
         ProvisionedThroughput:
           ReadCapacityUnits: 1
-          WriteCapacityUnits: 5
+          WriteCapacityUnits: 15
+    MockDataQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: "MockDataQueue"

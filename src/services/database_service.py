@@ -35,7 +35,7 @@ class DatabaseService:
                 sk_key: sk_value
             }
         )
-        return item['Item']
+        return item.get('Item')
 
     def query(self, expression: Equals, index_name: str = None) -> Iterable:
 
