@@ -19,11 +19,13 @@ def get_asset_vulnerabilities(user: UserModel, event):
     asset_vulnerability_service = AssetVulnerabilityService()
     asset_vulnerabilities = asset_vulnerability_service.get_asset_vulnerabilities(group_name, status, asset)
 
-    return response(list(map(lambda av: {
+    converted_av = list(map(lambda av: {
             'name': av.name,
             'description': av.description,
             'asset_ip': av.ip,
             'severity': av.severity,
             'status': av.status,
             'vulnerability_id': av.vulnerability_id
-        }, asset_vulnerabilities)))
+        }, asset_vulnerabilities))
+
+    return response({'count': len(converted_av), 'records': converted_av})
