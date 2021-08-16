@@ -1,42 +1,42 @@
-<!--
-title: 'AWS Simple HTTP Endpoint example in Python'
-description: 'This template demonstrates how to make a simple REST API with Python running on AWS Lambda and API Gateway using the traditional Serverless Framework.'
-layout: Doc
-framework: v2
-platform: AWS
-language: python
-authorLink: 'https://github.com/serverless'
-authorName: 'Serverless, inc.'
-authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4'
--->
-
 # Serverless Vulnerabilities Manager
-## Access paterns
-* Get all groups for by username;
-* Get all assets by a list of groups;
-* Get all vulnerabilities by a list of assets
-* Filter vulnerabilities by status or/and complexity
 
-| PK (GSI1SK)   | SK (GSI1PK)                                  | Type               | Complexity (LSI1) | Status (LSI2) |
-|---------------|----------------------------------------------|--------------------|-------------------|---------------|
-| GROUP#MyGroup | GROUP#MyGroup                                | Group              |                   |               |
-|               | USER#alex@test.com                           | User               |                   |               |
-|               | ASSET#google.com#VULNERABILITY#CVE-2020-8503 | AssetVulnerability | Medium            | Open          |
-|               | ASSET#google.com#VULNERABILITY#CVE-2020-8504 | AssetVulnerability | Low               | Close         |
-|               | ASSET#apple.com#VULNERABILITY#CVE-2020-8505  | AssetVulnerability | High              | In Progress   |
-
+## Architecture diagram
+![diagram](./vmt_diagram.png)
 ## Usage
 
+### Requirements:
+* Python 3.5+;
+* pip;
+* nodejs 14+ (for serverless framework);
+* npm
+* aws account (for deployment);
+
+### Getting started:
+* install nodejs packages: `npm install`;
+* install python packages: `pip install -r requirements.txt`;
+* start serverless offline: `sls offline`;
+
+At this point everything should be set up. The Api should be available at localhost:3000. 
+For example: http://localhost:3000/dev/groups?username=admin@test.com
+
+## Example of usage
+##### API:
+* `/groups?username=admin@test.com` - get group names for admin user
+* `/asset-vulnerabilities/3?username=admin@test.com&group=Williams PLC&asset=101.243.145.6` - get asset vulnerabilities with following filters:
+    * status - `3`;
+    * username - `admin@test.com`;
+    * group - `Williams PLC`;
+    * asset - `101.243.145.6`
+
+##### Populate test data:
+```
+sls invoke local -f loadMetaData -d '{"number_of_av": 150}'
+```
+
 ### Deployment
-
-This example is made to work with the Serverless Framework dashboard which includes advanced features like CI/CD, monitoring, metrics, etc.
-
 ```
-$ serverless login
-$ serverless deploy
+sls deploy
 ```
-
-To deploy without the dashboard you will need to remove `org` and `app` fields from the `serverless.yml`, and you won’t have to run `sls login` before deploying.
 
 After running deploy, you should see output similar to:
 
@@ -72,65 +72,3 @@ layers:
 ```
 
 _Note_: In current form, after deployment, your API is public and can be invoked by anyone. For production deployments, you might want to configure an authorizer. For details on how to do that, refer to [http event docs](https://www.serverless.com/framework/docs/providers/aws/events/apigateway/).
-
-### Invocation
-
-After successful deployment, you can call the created application via HTTP:
-
-```bash
-curl https://xxxxxxx.execute-api.us-east-1.amazonaws.com/dev/
-```
-
-Which should result in response similar to the following (removed `input` content for brevity):
-
-```json
-{
-  "message": "Go Serverless v2.0! Your function executed successfully!",
-  "input": {
-    ...
-  }
-}
-```
-
-### Local development
-
-You can invoke your function locally by using the following command:
-
-```bash
-serverless invoke local --function hello
-```
-
-Which should result in response similar to the following:
-
-```
-{
-  "statusCode": 200,
-  "body": "{\n  \"message\": \"Go Serverless v2.0! Your function executed successfully!\",\n  \"input\": \"\"\n}"
-}
-```
-
-Alternatively, it is also possible to emulate API Gateway and Lambda locally by using `serverless-offline` plugin. In order to do that, execute the following command:
-
-```bash
-serverless plugin install -n serverless-offline
-```
-
-It will add the `serverless-offline` plugin to `devDependencies` in `package.json` file as well as will add it to `plugins` in `serverless.yml`.
-
-After installation, you can start local emulation with:
-
-```
-serverless offline
-```
-
-To learn more about the capabilities of `serverless-offline`, please refer to its [GitHub repository](https://github.com/dherault/serverless-offline).
-
-### Bundling dependencies
-
-In case you would like to include 3rd party dependencies, you will need to use a plugin called `serverless-python-requirements`. You can set it up by running the following command:
-
-```bash
-serverless plugin install -n serverless-python-requirements
-```
-
-Running the above will automatically add `serverless-python-requirements` to `plugins` section in your `serverless.yml` file and add it as a `devDependency` to `package.json` file. The `package.json` file will be automatically created if it doesn't exist beforehand. Now you will be able to add your dependencies to `requirements.txt` file (`Pipfile` and `pyproject.toml` is also supported but requires additional configuration) and they will be automatically injected to Lambda package during build process. For more details about the plugin's configuration, please refer to [official documentation](https://github.com/UnitedIncome/serverless-python-requirements).
